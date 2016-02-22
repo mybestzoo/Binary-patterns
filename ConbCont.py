@@ -17,29 +17,29 @@ def showIm(I):
 
 def index(I,i,j):
 	v = zeros(8)
-	if I[i+1,j] == 0:
+	if I[i,j+1] == 0:
 		v[0] = 1
 		v[1] = 1
 		v[4] = 1
-	if I[i+1,j-1] == 0:
+	if I[i+1,j+1] == 0:
 		v[1] = 1
-	if I[i,j-1] == 0:
+	if I[i+1,j] == 0:
 		v[1] = 1
 		v[2] = 1
 		v[5] = 1
-	if I[i-1,j-1] == 0:
+	if I[i+1,j-1] == 0:
 		v[2] = 1
-	if I[i-1,j] == 0:
+	if I[i,j-1] == 0:
 		v[2] = 1
 		v[3] = 1
 		v[6] = 1
-	if I[i+1,j+1] == 0:
+	if I[i-1,j-1] == 0:
 		v[3] = 1
-	if I[i,j+1] == 0:
+	if I[i-1,j] == 0:
 		v[3] = 1
 		v[0] = 1
 		v[7] = 1
-	if I[i+1,j+1] == 0:
+	if I[i-1,j+1] == 0:
 		v[0] = 1
 	ind = v[0]+v[1]+v[2]+v[3]-v[4]-v[5]-v[6]-v[7]
 	return ind
@@ -50,17 +50,13 @@ rgb = array(img)
 
 #convert to mono
 I = mono(rgb)
-showIm(I)
 
 l = 0
-k = 0
 n = 0
 
-
 while l< 1:
-	k = k+1
-	for i in arange(1,img.size[0]-1):
-		for j in arange(1,img.size[1]-1):
+	for i in arange(1,img.size[1]-2):
+		for j in arange(1,img.size[0]-2):
 			if I[i,j] == 0 and index(I,i,j) == 1:
 				I[i,j] = 1
 				n = n+1
