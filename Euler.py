@@ -1,11 +1,12 @@
+#from __future__ import division
 from PIL import Image, ImageDraw
 from numpy import *
 import matplotlib.pyplot as plt
 
-def mono(rgb):
+def gray(rgb):
 	r, g, b = rgb[:,:,0]/255, rgb[:,:,1]/255, rgb[:,:,2]/255
-	mono = (r + g + b) / 3
-	return mono	
+	gray = (r + g + b) / 3
+	return gray	
 
 def showIm(I):
 	img = Image.new('1',(shape(I)[0],shape(I)[1]))
@@ -81,18 +82,11 @@ def Euler(I):
 			k = 0
 	return E	
 
-def EulerSimple(I):
+def EulerVer1(I):
 	# Calculation of Euler characteristic by definition
 	V = zeros((img.size[1],img.size[0]))
 	R = zeros((img.size[1],img.size[0],2))
 	G = sum(I)
-	# zeropad the border
-	for i in arange(0,img.size[1]):
-		I[i,0] = 0
-		I[i,img.size[1]-1] = 0
-	for j in arange(0,img.size[0]):
-		I[0,j] = 0
-		I[img.size[0]-1,j] = 0
 	for i in arange(0,img.size[1]):
 			for j in arange(0,img.size[0]):
 				if I[i,j] == 1:
@@ -109,6 +103,31 @@ def EulerSimple(I):
 						V[i,j] = 1
 						R[i,j,1] = 1
 	E = sum(V)-sum(R)+G
+	return E
+	
+def EulerVer2(I):
+	# Calculation of Euler characteristic by definition
+	V = zeros((img.size[1],img.size[0]))
+	R = zeros((img.size[1],img.size[0],2))
+	G = sum(I)
+	for i in arange(0,img.size[1]):
+			for j in arange(0,img.size[0]):
+				V[i,j] = amax([I[i,j],I[i,j-1],I[i-1,j-1],I[i-1,j]])
+				R[i,j,0] = amax([I[i,j],I[i,j-1]])
+				R[i,j,1] = amax([I[i,j],I[i-1,j]])
+	B = sum(V)-sum(R)+G
+	return B
+	
+def EulerVer3(I):
+	E = 0
+	# Calculation of Euler characteristic by definition
+	for i in arange(1,img.size[1]):
+			for j in arange(1,img.size[0]):
+				V = I[i,j] or I[i,j-1] or I[i-1,j-1] or I[i-1,j]
+				R1 = I[i,j] or I[i,j-1]
+				R2 = I[i,j] or I[i-1,j]
+				E += V + (-1)*R1 + (-1)*R2
+	E += sum(I)			
 	return E
 		
 """
@@ -129,16 +148,27 @@ def sliding_window(I, stepSize, windowSize):
 	"""
 
 E = []	
-for i in arange(1,93):
-	img = Image.open('D:\\Pattern recognition\\Texture\\sample35\\BW\\image{0:03d}.png'.format(i))
+for i in arange(1,40):
+	img = Image.open('D:\\Pattern recognition\\Small texture\\cushion1\\BW\\image{0:03d}.png'.format(i))
 	rgb = array(img)
 	I = rgb[:,:]
-	E.append(EulerSimple(I))
-	print(EulerSimple(I))
+	#I = gray(I)
+
+	# zeropad the border
+	for i in arange(0,img.size[1]):
+		I[i,0] = 0
+		I[i,img.size[1]-1] = 0
+	for j in arange(0,img.size[0]):
+		I[0,j] = 0
+		I[img.size[0]-1,j] = 0
+	print(EulerVer3(I))	
+	E.append(EulerVer3(I))
+
 		
+# plot histogram
 fig = plt.figure()
 plt.hist(E, bins =20, histtype='stepfilled')
-plt.savefig('sample35.pdf', format='pdf')
+plt.savefig('cushion.pdf', format='pdf')
 #plt.show()
 
 """
