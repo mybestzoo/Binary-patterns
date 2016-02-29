@@ -1,11 +1,12 @@
 from __future__ import division
 from numpy import *
+from PIL import Image, ImageDraw
 
 def calculateProbability(x, mean, stdev):
 	exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))
 	return (1 / (math.sqrt(2*math.pi) * stdev)) * exponent
 
-def ClassProbabilities(x,M)
+def ClassProbabilities(x,M):
 	P = []
 	for i in arange(0,6):
 		P.append(calculateProbability(x,M[i,0],M[i,1]))
@@ -45,12 +46,14 @@ M[5,0] = -10442.8974359
 M[5,1] = 829.914632461
 
 #load image
-img = Image.open('D:\\Pattern recognition\\Small texture\\cushion1\\BW\\image{0:03d}.png'.format(i))
+img = Image.open('D:\\Pattern recognition\\Small texture\\canvas1\\BW\\image001.png')
 rgb = array(img)
-I = rgb[:,:]]
+I = rgb[:,:]
 
 #Calculate Euler characteristics
 x = EulerVer3(I)
 
 #Classify
 P = ClassProbabilities(x,M)
+
+print P, max(P)
