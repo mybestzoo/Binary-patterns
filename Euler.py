@@ -1,4 +1,7 @@
+#dataset texures http://www.cb.uu.se/~gustaf/texture/
+
 #from __future__ import division
+import scipy.stats as stats
 from PIL import Image, ImageDraw
 from numpy import *
 import matplotlib.pyplot as plt
@@ -122,11 +125,11 @@ def EulerVer3(I):
 	E = 0
 	# Calculation of Euler characteristic by definition
 	for i in arange(1,img.size[1]):
-			for j in arange(1,img.size[0]):
-				V = I[i,j] or I[i,j-1] or I[i-1,j-1] or I[i-1,j]
-				R1 = I[i,j] or I[i,j-1]
-				R2 = I[i,j] or I[i-1,j]
-				E += V + (-1)*R1 + (-1)*R2
+		for j in arange(1,img.size[0]):
+			V = I[i,j] or I[i,j-1] or I[i-1,j-1] or I[i-1,j]
+			R1 = I[i,j] or I[i,j-1]
+			R2 = I[i,j] or I[i-1,j]
+			E += V + (-1)*R1 + (-1)*R2
 	E += sum(I)			
 	return E
 		
@@ -149,7 +152,7 @@ def sliding_window(I, stepSize, windowSize):
 
 E = []	
 for i in arange(1,40):
-	img = Image.open('D:\\Pattern recognition\\Small texture\\cushion1\\BW\\image{0:03d}.png'.format(i))
+	img = Image.open('D:\\Pattern recognition\\Small texture\\stone1\\BW\\image{0:03d}.png'.format(i))
 	rgb = array(img)
 	I = rgb[:,:]
 	#I = gray(I)
@@ -164,11 +167,19 @@ for i in arange(1,40):
 	print(EulerVer3(I))	
 	E.append(EulerVer3(I))
 
+E = sort(E)	
+M = mean(E)
+sigma = std(E)
+fit = stats.norm.pdf(E, mean(E), std(E))  #fitting the distribution
+
+print M, sigma
+
 		
 # plot histogram
 fig = plt.figure()
-plt.hist(E, bins =20, histtype='stepfilled')
-plt.savefig('cushion.pdf', format='pdf')
+plt.plot(E,fit,'-o')
+plt.hist(E, bins =20, histtype='stepfilled', normed = True)
+plt.savefig('stone1.pdf', format='pdf')
 #plt.show()
 
 """
